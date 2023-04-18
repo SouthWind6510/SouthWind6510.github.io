@@ -1,0 +1,388 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>《深入理解计算机系统》学习笔记（六）--- 存储器层次结构 | 吹梦到西周's Blog</title><meta name="keywords" content="计算机基础,CSAPP"><meta name="author" content="吹梦到西周"><meta name="copyright" content="吹梦到西周"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="存储器系统是一个具有不同容量、成本和访问时间的存储设备的层次结构。在本章中，我们将探索存储器层次结构是怎么构建的，体会到多种存储设备之间属性的美妙融合，以及程序的属性在这当中起到的作用。 存储技术和趋势 随机访问存储器 现在大多数人所熟悉的内存其实叫做随机访问存储器（RAM），分为两类——静态（SRAM）和动态（DRAM），它们之间是根据存储单元实现方式来区分的。   SRAM不需要定期刷新，DR">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《深入理解计算机系统》学习笔记（六）--- 存储器层次结构">
+<meta property="og:url" content="http://southwind.tech/posts/6edad5b8.html">
+<meta property="og:site_name" content="吹梦到西周&#39;s Blog">
+<meta property="og:description" content="存储器系统是一个具有不同容量、成本和访问时间的存储设备的层次结构。在本章中，我们将探索存储器层次结构是怎么构建的，体会到多种存储设备之间属性的美妙融合，以及程序的属性在这当中起到的作用。 存储技术和趋势 随机访问存储器 现在大多数人所熟悉的内存其实叫做随机访问存储器（RAM），分为两类——静态（SRAM）和动态（DRAM），它们之间是根据存储单元实现方式来区分的。   SRAM不需要定期刷新，DR">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://southwind.tech/image/covers/%E9%AD%94%E6%96%B9_20211228_github.png">
+<meta property="article:published_time" content="2022-02-13T10:26:39.000Z">
+<meta property="article:modified_time" content="2022-08-10T16:08:57.000Z">
+<meta property="article:author" content="吹梦到西周">
+<meta property="article:tag" content="计算机基础">
+<meta property="article:tag" content="CSAPP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://southwind.tech/image/covers/%E9%AD%94%E6%96%B9_20211228_github.png"><link rel="shortcut icon" href="/image/covers/%E5%A4%B4%E5%83%8F.png"><link rel="canonical" href="http://southwind.tech/posts/6edad5b8"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: {"appId":"6I6M6UJPP3","apiKey":"f48bbfe8fb6a887df04f4f0b8443e738","indexName":"HexoBlog","hits":{"per_page":6},"languages":{"input_placeholder":"搜索文章","hits_empty":"找不到您查询的内容：${query}","hits_stats":"找到 ${hits} 条结果，用时 ${time} 毫秒"}},
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":200},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#121212","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '《深入理解计算机系统》学习笔记（六）--- 存储器层次结构',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-08-11 00:08:57'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.0.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/image/covers/%E5%A4%B4%E5%83%8F.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">14</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Mark</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/image/covers/%E9%AD%94%E6%96%B9_20211228_github.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">吹梦到西周's Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Mark</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">《深入理解计算机系统》学习笔记（六）--- 存储器层次结构</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-02-13T10:26:39.000Z" title="发表于 2022-02-13 18:26:39">2022-02-13</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-08-10T16:08:57.000Z" title="更新于 2022-08-11 00:08:57">2022-08-11</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/CSAPP/">CSAPP</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>12分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="《深入理解计算机系统》学习笔记（六）--- 存储器层次结构"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>存储器系统是一个具有不同容量、成本和访问时间的存储设备的层次结构。在本章中，我们将探索存储器层次结构是怎么构建的，体会到多种存储设备之间属性的美妙融合，以及程序的属性在这当中起到的作用。</p>
+<h2 id="存储技术和趋势">存储技术和趋势</h2>
+<h3 id="随机访问存储器">随机访问存储器</h3>
+<p>现在大多数人所熟悉的内存其实叫做随机访问存储器（RAM），分为两类——静态（SRAM）和动态（DRAM），它们之间是根据存储单元实现方式来区分的。</p>
+<img src="/posts/6edad5b8/image-20220215153230422.png" class="" title="SRAM和DRAM的区别">
+<ul>
+<li>SRAM不需要定期刷新，DRAM需要</li>
+<li>SRAM访问速度比DRAM快一个数量级</li>
+<li>一般将SRAM用于高速缓存，容量不超过几兆字节</li>
+<li>DRAM广泛用于主存以及图形显卡的帧缓存中</li>
+<li>两者的相同点是都需要通电，一旦断电，所有的信息都会丢失</li>
+</ul>
+<h3 id="非易失性存储器">非易失性存储器</h3>
+<p>非易失性存储器即使是在断电后，依然保存着它们的信息，它们的通用名称是只读存储器（ROM）</p>
+<h4 id="传统机械硬盘">传统机械硬盘</h4>
+<p>虽然现在越来越多电脑已经改为使用固态硬盘，但是还是有必要了解一下硬盘的组成的。传统的机械硬盘有许多不同的部件：</p>
+<img src="/posts/6edad5b8/14612434554342-20220215152511587.jpg" class="" title="机械硬盘部件">
+<p>机械硬盘有许多片磁盘(platter)组成，每一片磁盘有两面；每一面由一圈圈的磁道(track)组成，而每个磁道会被分隔成不同的扇区(sector)。</p>
+<img src="/posts/6edad5b8/14612437020652-20220215152534995.jpg" class="" title="磁盘的构成">
+<p>上图是一个磁盘的视图，多个磁盘组合起来是这样的：</p>
+<img src="/posts/6edad5b8/14612437678384-20220215152616665.jpg" class="" title="img">
+<p>读取一个扇区的第一个比特是非常耗时的，之后的都几乎可以忽略不计；读取一个双字的访问时间，硬盘比 SRAM 慢 40,000 倍，比 DRAM 慢 2500 倍；如果比较访问一个单字的时间，这个差距会更大。</p>
+<p>最后需要知道的就是逻辑分区和实际的物理分区的区别，为了使用方便，会用连续的数字来标志所有可用的扇区，具体的映射工作由磁盘控制器完成。</p>
+<img src="/posts/6edad5b8/image-20220215152737424.png" class="" title="I&#x2F;O总线">
+<p>像显卡、监视器、鼠标键盘和磁盘这样的设备都是通过I/O总线连接到CPU和内存中的，同系统总线和存储器总线不同，I/O总线设计成与底层CPU无关。虽然相比系统总线和存储器总线速度较慢，但是它可以容纳种类繁多的第三方I/O设备。</p>
+<h4 id="固态硬盘">固态硬盘</h4>
+<p>接下来介绍一下固态硬盘，内部结构如下</p>
+<img src="/posts/6edad5b8/14612490867850-20220215152652912.jpg" class="" title="固态硬盘结构">
+<p>固态硬盘中分成很多的块(Block)，每个块又有很多页(Page)，大约 32-128 个，每个页可以存放一定数据（大概 4-512KB），页是进行数据读写的最小单位。但是有一点需要注意，对一个页进行写入操作的时候，需要先把整个块清空（设计限制），而一个块大概在 100,000 次写入之后就会报废。</p>
+<p>与传统的机械硬盘相比，固态硬盘在读写速度上有很大的优势。但是因为设计本身的约束，连续访问会比随机访问快，而且如果需要写入 Page，那么需要移动其他 Page，擦除整个 Block，然后才能写入。现在固态硬盘的读写速度差距已经没有以前那么大了，但是仍然有一些差距。</p>
+<p>不过与机械硬盘相比，固态硬盘存在一个具体的寿命限制，价格也比较贵，但是因为速度上的优势，越来越多设备开始使用固态硬盘。</p>
+<h3 id="总线-2">总线</h3>
+<p>数据流通过称为总线的共享电路在CPU和主存之间传输，总线是用来传输地址、数据和控制信号的一组平行的电线，通常来说由多个设备共享，类似于不同城市之间的高速公路，可以传输各类数据。CPU 通过总线和对应的接口来从不同的设备中获得所需要的数据，放入寄存器中等待运算。</p>
+<img src="/posts/6edad5b8/14612508854709.jpg" class="" title="总线结构">
+<p>I/O桥接器将系统总线的电信号翻译成存储器总线的电信号。</p>
+<p>假设 CPU 需要从硬盘中读取一些数据，会给定指令，逻辑块编号和目标地址，并发送给磁盘控制器。然后磁盘控制器会读取对应的数据，并通过 DMA(direct memory access)把数据传输到内存中；传输完成后，磁盘控制器通过中断的方式通知 CPU，然后 CPU 完成之后的工作。</p>
+<p>总线上连接的各个设备，其访问速度有天壤之别，不同的技术发展速度不同，更加剧了这个情况。</p>
+<img src="/posts/6edad5b8/14612509876691-20220215152840274.jpg" class="" title="速度趋势">
+<p>比方说磁盘的读写速度，30 年大概只提高了一个数量级多一点，所以固态硬盘的出现，一下拯救了劳苦大众（提高了两个数量级），DRAM 的发展，一路从 DDR12345 发展来，速度大概提高了一个数量级，不过 SRAM 则是在同一个起点愣是多跑了一个数量级，总体来说是跟着 CPU 的发展走的。不过 CPU 的发展在 2003 年也遇到了问题（单个核心基本到极限），不过多核的出现以及技术优化，总体来说还是使得执行速度越来越快。</p>
+<p>那么这么大的时间差距，怎么办呢？难道根据木桶理论，都要取决于最慢的那个吗？不一定！局部性原理(Locality)可以在一定程度上拯救世界。</p>
+<h2 id="局部性原理">局部性原理</h2>
+<p>一个编写良好的计算机程序倾向于展示出良好的局部性。也就是它们更倾向于引用最近使用过的数据项临近的数据项或其本身。这种倾向性，被称为<strong>局部性原理</strong>，这是程序的一个基本的、持久的属性，对硬件和软件系统的设计都有着极大的影响。</p>
+<p>局部性有两种不同的形式：</p>
+<ol>
+<li>时间局部性：最近被引用的存储器地址可能在不久的将来再次被引用。</li>
+<li>空间局部性：下一个被引用的地址可能与当前正在使用的地址是临近的。</li>
+</ol>
+<p>举个例子：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sum = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; n; i++)&#123;</span><br><span class="line">    sum += a[i];</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> sum;</span><br></pre></td></tr></table></figure>
+<p>在这个循环中，每一次都会执行相同的指令，这满足时间局部性；</p>
+<p>每次循环访问的数组地址是连续的，满足空间局部性。</p>
+<p>再看下一个例子，实现相同的目标的两段代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">    <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; m; j++) &#123;</span><br><span class="line">        sum += a[i][j];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> sum;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; n; j++) &#123;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; m; i++) &#123;</span><br><span class="line">        sum += a[i][j];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> sum;</span><br></pre></td></tr></table></figure>
+<p>这两段代码最终的结果都是数组<code>a</code>的和，但是它们在效率上是有一定区别的。</p>
+<p>二维数组在内存中的排列是按照先行后列，即：1行1列，1行2列……n行m列，第一段代码遍历数组的顺序和在内存中的排列是一致的，每次访问的地址都是上一次访问的临近位置，满足空间局部性；而第二段代码遍历数组的顺序在内存中是跳跃的。所以代码1的实际执行效率会更高。</p>
+<p>根据这个特性，在遍历数组时，尤其是高维数组，要注意按照内存中的排列顺序来访问。</p>
+<h2 id="存储器层次结构">存储器层次结构</h2>
+<p>我们已经研究了一些存储技术的属性，得到了这种基本原则：</p>
+<ul>
+<li>存储容量越大的设备，越便宜，速度越慢；</li>
+<li>CPU和主存之间的速度差距越来越大；</li>
+<li>一个编写良好的程序倾向于展示出良好的局部性。</li>
+</ul>
+<p>计算机技术中一个令人惊喜的巧合是，硬件和软件的这些基本属性互补的很完美，它们这种互补的性质使人们想到一种组织存储器系统的方法，称为<strong>存储器层次结构</strong>。</p>
+<img src="/posts/6edad5b8/14612515449186.jpg" class="" title="存储器层次结构">
+<img src="/posts/6edad5b8/image-20220215153012692.png" class="" title="基本的缓存原理">
+<p>存储器层次结构的中心思想是，位于第K层的存储设备作为第K+1层存储设备的缓存。根据局部性原理，程序会更倾向于访问第K层的数据，而非第K+1层，这样就减少了访问时间。</p>
+<h3 id="缓存命中">缓存命中</h3>
+<p>当程序需要第K+1层中的某个数据对象时，首先在第K层中查找，如果找到，就称为<strong>缓存命中</strong>。这要比从第K+1层读取对象要快。</p>
+<h3 id="缓存未命中">缓存未命中</h3>
+<p>如果第K层中没有那个对象，就称为<strong>缓存未命中</strong>，这时就要从第K+1层中取出那个对象块，如果此时第K层的缓存已经满了的话，可能就会覆盖掉现存的一个块。</p>
+<h4 id="缓存未命中的类型">缓存未命中的类型</h4>
+<ol>
+<li>
+<p>强制性失效(Cold/Compulsory Miss)：如果第K层缓存是空的，此时访问任何数据都不会命中。</p>
+</li>
+<li>
+<p>容量失效(Capacity Miss)：程序通常是按照一系列阶段来运行的，每个阶段访问某个相对稳定的集合，称为<strong>工作集</strong>，当缓存的大小不够大，无法容纳下工作集时，就会发生<strong>容量失效</strong>。</p>
+</li>
+<li>
+<p>冲突失效(Confilict Miss)：这与缓存的实现方式有关，大多数缓存，特别是硬件缓存，因为它们必须被设计地较为简单，这限制了块可以放置的位置，块可以被放置在一个小的集合中（有时只是一个块）。</p>
+<p>假设缓存大小为4，内存中的第i块将被放到缓存中的(i%mod4)处，如果程序的请求顺序为0，8，0，8…这时，缓存足够保存所有被访问的对象，但是由于这些对象会被映射到同一个缓存块中，导致每次都不会命中，这种情况称为<strong>冲突失效</strong>。</p>
+</li>
+</ol>
+<h2 id="高速缓存存储器">高速缓存存储器</h2>
+<p>高速缓存存储器是完全由硬件自动管理的 SRAM 内存，位于CPU寄存器文件和主存之间，在现代操作系统中，它位于CPU芯片上，访问速度几乎和寄存器一样快，典型的是1或2个时钟周期。</p>
+<img src="/posts/6edad5b8/14612615839808.jpg" class="" title="高速缓存的位置">
+<p>然后我们需要关注高速缓存存储器的三个关键组成部分（注意区分大小写）：</p>
+<ul>
+<li>S 表示集合(set)数量</li>
+<li>E 表示每个集合中数据行(line)的数量</li>
+<li>B 表示每个缓存块(block)保存的字节数目</li>
+</ul>
+<p>在图上表示出来的就是：</p>
+<img src="/posts/6edad5b8/14612628563878.jpg" class="" title="高速缓存的结构">
+<p>所以缓存中存放数据的空间大小为：C=S×E×B</p>
+<p>实际上可以理解为三种层级关系，对应不同的索引，这样分层的好处在于，通过层级关系简化搜索需要的时间.。</p>
+<p>当处理器需要访问一个地址时，会先在高速缓冲存储器中进行查找，查找过程中我们首先在概念上把这个地址划分成三个部分：</p>
+<img src="/posts/6edad5b8/14612633441722.jpg" class="" title="地址划分">
+<h3 id="读取">读取</h3>
+<h4 id="直接映射缓存">直接映射缓存</h4>
+<p>具体在从缓存中读取一个地址时，首先我们通过 set index 确定要在哪个 set 中寻找，确定后利用 tag 和同一个 set 中的每个 line 进行比对，找到 tag 相同的那个 line，最后再根据 block offset 确定要从 line 的哪个位置读起（这里的而 line 和 block 是一个意思）。</p>
+<p>当 E=1 时，也就是每个 set 只有 1 个 line 的时候，称之为<strong>直接映射缓存</strong>(Direct Mapped Cache)，如下图所示：</p>
+<img src="/posts/6edad5b8/14612642281687.jpg" class="" title="直接映射缓存">
+<p>这种情况下，因为每个 set 对应 1 个 line，反过来看，1 个 line 就需要一个 set，所以 set index 的位数就会较多（和之后的多路映射对比）。具体的检索过程就是先通过 set index 确定哪个 set，然后看是否 valid，然后比较那个 set 里唯一 line 的 tag 和地址的 t bits 是否一致，就可以确定是否缓存命中。</p>
+<p>命中之后根据 block offset 确定偏移量，因为需要读入一个 int，所以会读入 4 5 6 7 这四个字节（假设缓存是 8 个字节）。如果 tag 不匹配的话，这行会被扔掉并放新的数据进来。</p>
+<p>我们来看一个具体的例子来理解是如何工作的，寻址空间 M=16 字节，即4位地址，对应 B=2, S=4, E=1, 我们按照如下顺序进行数据读取：</p>
+<ol>
+<li><code>0 00 0</code>,miss</li>
+<li><code>0 00 1</code>,hit</li>
+<li><code>0 11 1</code> ,miss</li>
+<li><code>1 00 0</code>,miss</li>
+<li><code>0 00 0</code>,miss</li>
+</ol>
+<p>缓存的最终情况，x 表示没有内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Set  v  Tag  Block1  Block2</span><br><span class="line"> 0   1   0     A1      A2</span><br><span class="line"> 1   0   x     x       x</span><br><span class="line"> 2   0   x     x       x</span><br><span class="line"> 3   1   0     A6      A7</span><br></pre></td></tr></table></figure>
+<p>有 4 组 set，所以需要 2 位 set index，在查找的时候，会根据中间两位来确定在哪个 set 中，地址 0 和 8 中间两位相同，会产生冲突，导致连续的未命中，这个问题可以通过<strong>多路组相联高速缓存</strong>来解决。</p>
+<h4 id="多路组相联高速缓存">多路组相联高速缓存</h4>
+<p>当 E 大于 1 时，也就是每个集合中有大于 1 个 line 时，称为 <strong>E 路组相联高速缓存</strong>。</p>
+<img src="/posts/6edad5b8/image-20220215181028290.png" class="" title="两路组相联缓存">
+<p>这里的 E 等于 2， 就是两路组相联缓存，每个 set 有两个 line，所以只有 2 个 set，set index 也只需要 1 位了，tag 增加为 2 位。</p>
+<p>再来一遍刚刚那个例子：</p>
+<ol>
+<li><code>00 0 0</code>,miss</li>
+<li><code>00 0 1</code>,hit</li>
+<li><code>01 1 1</code> ,miss</li>
+<li><code>10 0 0</code>,miss</li>
+<li><code>00 0 0</code>,hit</li>
+</ol>
+<p>缓存的最终情况，x 表示没有内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Set  v  Tag  Block1  Block2</span><br><span class="line"> 0   1  00     A1      A2</span><br><span class="line"> 0   1  10     A8      A9</span><br><span class="line"> 1   1  01     A6      A7</span><br><span class="line"> 1   0  x      x       x</span><br></pre></td></tr></table></figure>
+<p>现在因为每个 set 中有两个 line，即使 8 和 0 的 set index 一致，它们也可以同时放到 set0中，而不会发生替换，所以最后一次访问 0，也不会失效。</p>
+<h3 id="写入">写入</h3>
+<p>在将数据写入到存储设备中时，不同的层级可能会存放同一个数据的不同拷贝（缓存，内存，硬盘），如果发生写入命中（要写入的地址在缓存中存在），更新了缓存中的数据之后，那么怎么更新该数据在内存中的拷贝呢，有两种策略：</p>
+<ol>
+<li>Write- throug(直写)：立即更新内存中的数据拷贝。这种方式中内存始终保存着最新的数据，但是耗费高。</li>
+<li>Write-back(写回)：用一个特殊的标志位标记该数据被修改，当这条数据在缓存中被覆盖时，才更新内存中的拷贝。</li>
+</ol>
+<p>当写入未命中时，也有两种方法：</p>
+<ol>
+<li>Write- allocate(写分配)：将目标内存块加载到缓存中，在缓存中更新该缓存块。</li>
+<li>Not- write- allocate(非写分配)：直接将数据写入到内存块中。</li>
+</ol>
+<p>这四种策略通常的搭配是：</p>
+<ul>
+<li>Write-through + No-write-allocate</li>
+<li>Write-back + Write-allocate</li>
+</ul>
+<p>其中第一种可以保证绝对的数据一致性，第二种效率会比较高（通常情况下）。</p>
+<h3 id="高速缓存参数的性能影响">高速缓存参数的性能影响</h3>
+<p>使用一些指标来衡量缓存的性能：</p>
+<ol>
+<li>命中率：在一个程序或程序的一部分在执行期间，缓存命中的比率；</li>
+<li>命中时间：冲缓存传送一个字到CPU所需的时间，包括 set 选择，line 选择，字选择的时间，对于 L1 缓存来说，命中时间通常是 1-2 个时钟周期；</li>
+<li>未命中开销：由于未命中导致的额外所需时间。</li>
+</ol>
+<p>优化缓存的成本和性能的折中是一份很精细的工作，例如高速缓存大小、块大小、相联度、写策略等都是需要考虑的因素。</p>
+<h2 id="参考资料">参考资料</h2>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1iW411d7hd?p=11">The Memory Hierarchy</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1iW411d7hd?p=12&amp;spm_id_from=333.1007.top_right_bar_window_history.content.click">Cache Memories</a></li>
+<li><a target="_blank" rel="noopener" href="https://wdxtub.com/csapp/thin-csapp-3/2016/04/16/">wdxtub的博客</a></li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">吹梦到西周</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://southwind.tech/posts/6edad5b8.html">http://southwind.tech/posts/6edad5b8.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://southwind.tech" target="_blank">吹梦到西周's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a><a class="post-meta__tags" href="/tags/CSAPP/">CSAPP</a></div><div class="post_share"><div class="social-share" data-image="/image/covers/%E9%AD%94%E6%96%B9_20211228_github.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/24c5f30e.html"><img class="prev-cover" src="/image/posts_img/sa-token_logo.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Spring boot集成Sa-Token权限管理</div></div></a></div><div class="next-post pull-right"><a href="/posts/b0ed8d6a.html"><img class="next-cover" src="/image/covers/%E9%AD%94%E6%96%B9_20211228_github.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">《深入理解计算机系统》学习笔记（七）--- 链接</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/3d9621fe.html" title="《深入理解计算机系统》学习笔记（一）--- 计算机系统漫游"><img class="cover" src="/image/covers/%E9%AD%94%E6%96%B9_20211228_github.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-01-25</div><div class="title">《深入理解计算机系统》学习笔记（一）--- 计算机系统漫游</div></div></a></div><div><a href="/posts/b0ed8d6a.html" title="《深入理解计算机系统》学习笔记（七）--- 链接"><img class="cover" src="/image/covers/%E9%AD%94%E6%96%B9_20211228_github.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-02-15</div><div class="title">《深入理解计算机系统》学习笔记（七）--- 链接</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/image/covers/%E5%A4%B4%E5%83%8F.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">吹梦到西周</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">14</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/SouthWind6510"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/SouthWind6510" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:z1113270382@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%92%8C%E8%B6%8B%E5%8A%BF"><span class="toc-number">1.</span> <span class="toc-text">存储技术和趋势</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9A%8F%E6%9C%BA%E8%AE%BF%E9%97%AE%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-number">1.1.</span> <span class="toc-text">随机访问存储器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%9E%E6%98%93%E5%A4%B1%E6%80%A7%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-number">1.2.</span> <span class="toc-text">非易失性存储器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BC%A0%E7%BB%9F%E6%9C%BA%E6%A2%B0%E7%A1%AC%E7%9B%98"><span class="toc-number">1.2.1.</span> <span class="toc-text">传统机械硬盘</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98"><span class="toc-number">1.2.2.</span> <span class="toc-text">固态硬盘</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BA%BF-2"><span class="toc-number">1.3.</span> <span class="toc-text">总线</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B1%80%E9%83%A8%E6%80%A7%E5%8E%9F%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">局部性原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="toc-number">3.</span> <span class="toc-text">存储器层次结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD"><span class="toc-number">3.1.</span> <span class="toc-text">缓存命中</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E6%9C%AA%E5%91%BD%E4%B8%AD"><span class="toc-number">3.2.</span> <span class="toc-text">缓存未命中</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E6%9C%AA%E5%91%BD%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="toc-number">3.2.1.</span> <span class="toc-text">缓存未命中的类型</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-number">4.</span> <span class="toc-text">高速缓存存储器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%BB%E5%8F%96"><span class="toc-number">4.1.</span> <span class="toc-text">读取</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E6%98%A0%E5%B0%84%E7%BC%93%E5%AD%98"><span class="toc-number">4.1.1.</span> <span class="toc-text">直接映射缓存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E8%B7%AF%E7%BB%84%E7%9B%B8%E8%81%94%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98"><span class="toc-number">4.1.2.</span> <span class="toc-text">多路组相联高速缓存</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%99%E5%85%A5"><span class="toc-number">4.2.</span> <span class="toc-text">写入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E5%8F%82%E6%95%B0%E7%9A%84%E6%80%A7%E8%83%BD%E5%BD%B1%E5%93%8D"><span class="toc-number">4.3.</span> <span class="toc-text">高速缓存参数的性能影响</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">5.</span> <span class="toc-text">参考资料</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/32e27686.html" title="Hexo博客添加百度、谷歌收录"><img src="/image/covers/%E9%AD%94%E6%96%B9_20211228_github.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hexo博客添加百度、谷歌收录"/></a><div class="content"><a class="title" href="/posts/32e27686.html" title="Hexo博客添加百度、谷歌收录">Hexo博客添加百度、谷歌收录</a><time datetime="2023-02-27T03:15:17.000Z" title="发表于 2023-02-27 11:15:17">2023-02-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/0.html" title="无题"><img src="/image/covers/%E9%AD%94%E6%96%B9_20211228_github.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="无题"/></a><div class="content"><a class="title" href="/posts/0.html" title="无题">无题</a><time datetime="2023-01-31T13:00:49.000Z" title="发表于 2023-01-31 21:00:49">2023-01-31</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/0.html" title="无题"><img src="/image/covers/%E9%AD%94%E6%96%B9_20211228_github.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="无题"/></a><div class="content"><a class="title" href="/posts/0.html" title="无题">无题</a><time datetime="2023-01-16T09:34:27.000Z" title="发表于 2023-01-16 17:34:27">2023-01-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/a468e55f.html" title="常见数字倍数的特征"><img src="/image/covers/%E9%AD%94%E6%96%B9_20211228_github.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="常见数字倍数的特征"/></a><div class="content"><a class="title" href="/posts/a468e55f.html" title="常见数字倍数的特征">常见数字倍数的特征</a><time datetime="2022-09-24T04:17:14.000Z" title="发表于 2022-09-24 12:17:14">2022-09-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/9f8c23fa.html" title="macOS 终端美化 -- iTerm2 + oh my zsh + levelpower10k"><img src="/image/covers/%E9%AD%94%E6%96%B9_20211228_github.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="macOS 终端美化 -- iTerm2 + oh my zsh + levelpower10k"/></a><div class="content"><a class="title" href="/posts/9f8c23fa.html" title="macOS 终端美化 -- iTerm2 + oh my zsh + levelpower10k">macOS 终端美化 -- iTerm2 + oh my zsh + levelpower10k</a><time datetime="2022-08-01T15:41:37.000Z" title="发表于 2022-08-01 23:41:37">2022-08-01</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2023 By 吹梦到西周</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="algolia-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">Algolia</span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="search-wrap"><div id="algolia-search-input"></div><hr/><div id="algolia-search-results"><div id="algolia-hits"></div><div id="algolia-pagination"></div><div id="algolia-stats"></div></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script src="https://cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script><script src="/js/search/algolia.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>(() => {
+  const $mermaidWrap = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaidWrap.length) {
+    window.runMermaid = () => {
+      window.loadMermaid = true
+      const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+      Array.from($mermaidWrap).forEach((item, index) => {
+        const mermaidSrc = item.firstElementChild
+        const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+        const mermaidID = 'mermaid-' + index
+        const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+        mermaid.mermaidAPI.render(mermaidID, mermaidDefinition, (svgCode) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svgCode)
+        })
+      })
+    }
+
+    const loadMermaid = () => {
+      window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaid)
+    }
+
+    window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+  }
+})()</script><script>function addGitalkSource () {
+  const ele = document.createElement('link')
+  ele.rel = 'stylesheet'
+  ele.href= 'https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css'
+  document.getElementsByTagName('head')[0].appendChild(ele)
+}
+
+function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: '7fa0a53c060fc03b3149',
+      clientSecret: 'c41c670ffbf2489fd625ad943581e4fe520d539a',
+      repo: 'hexo-blog-comments',
+      owner: 'SouthWind6510',
+      admin: ['SouthWind6510'],
+      id: '108f700ce9e26c9e1bdfdb80d460f285',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    addGitalkSource()
+    getScript('https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.innerHTML= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
