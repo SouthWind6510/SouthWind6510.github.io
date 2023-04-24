@@ -20,15 +20,6 @@
   </url>
   
   <url>
-    <loc>https://blog.southwind.tech/posts/a468e55f.html</loc>
-    
-    <lastmod>2022-10-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://blog.southwind.tech/posts/494c46d9.html</loc>
     
     <lastmod>2022-09-24</lastmod>
@@ -165,20 +156,6 @@
   </url>
   
   <url>
-    <loc>https://blog.southwind.tech/tags/%E6%95%B0%E5%AD%A6/</loc>
-    <lastmod>2023-04-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.southwind.tech/tags/%E6%95%B0%E5%AD%97/</loc>
-    <lastmod>2023-04-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://blog.southwind.tech/tags/git/</loc>
     <lastmod>2023-04-24</lastmod>
     <changefreq>weekly</changefreq>
@@ -238,13 +215,6 @@
   
   <url>
     <loc>https://blog.southwind.tech/categories/macOS/</loc>
-    <lastmod>2023-04-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.southwind.tech/categories/%E6%95%B0%E5%AD%A6/</loc>
     <lastmod>2023-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
